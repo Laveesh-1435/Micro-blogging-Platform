@@ -24,6 +24,7 @@ Flitter is built as a learning and showcase project to:
 
 ## 📸 Screenshots
 > _Add screenshots here if available_
+> will update later
 
 ## 🚀 Getting Started
 1. Clone the repository
@@ -33,4 +34,4 @@ Flitter is built as a learning and showcase project to:
 
 ---
 
-Made with ❤️ by [Your Name]
+Made with ❤️ by Manthan Garg And Mohit Aggarwal
