@@ -31,6 +31,48 @@ app.get('/dashboard', (req, res) => {
   });
 });
 
+// app.get('/profile', (req, res) => {
+//   // Get user data from wherever you store it (session, database, etc.)
+//   const user= {
+//     name: 'Manthan',
+//     handle: 'manthan',
+//     // other user properties
+//   };
+  
+//   res.render('profile', { user });
+// });
+
+// app.get("/profile", (req, res) => {
+//   res.render("profile");  // This will render 'views/profile.ejs'
+// });
+// app.get('/profile', (req, res) => {
+//   const user = {
+//     name: 'Manthan',
+//     handle: 'manthan',
+//     flitts: [],
+//     verified: true,
+//     bio: "Developer | Tech Enthusiast",
+//     location: "Mumbai, India",
+//     website: "https://manthan.dev",
+//     joinDate: "January 2025",
+//     following: 120,
+//     followers: 200
+//   };
+  
+//   res.render('profile', { user, currentUser: user, suggestions: [], trends: [] });
+// });
+
+app.get('/profile', (req, res) => {
+  // Pass the mock data to the template
+  res.render('profile', {
+    user: mockData.userData,
+    flitts: mockData.flittsData,
+    trends: mockData.trendsData,
+    suggestions: mockData.suggestionsData
+  });
+});
+
+
 // Middleware
 app.use(helmet({
   contentSecurityPolicy: {
