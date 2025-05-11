@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flitter - Share your thoughts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+  
+</head>
+<body>
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message">Your flitt was posted!</span>
+    </div>
+    
+    <div class="container">
+        <!-- Left Sidebar -->
+        <div class="left-sidebar sidebar">
+            <div class="logo">
+                <i class="fab fa-twitter animate-pulse"></i>
+                <span>Flitter</span>
+            </div>
+            
+            <div class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </div>
+            
+            <div class="nav-item">
+                <i class="fas fa-hashtag"></i>
+                <span>Explore</span>
+            </div>
+            
+            <div class="nav-item">
+                <i class="far fa-bell"></i>
+                <span>Notifications</span>
+                <div class="badge">3</div>
+            </div>
+            
+            <!-- <div class="nav-item">
+                <i class="far fa-envelope"></i>
+                <span>Messages</span>
+            </div> -->
+            
+            <div class="nav-item">
+                <i class="far fa-bookmark"></i>
+                <span>Bookmarks</span>
+            </div>
+            
+            <!-- <div class="nav-item">
+                <i class="fas fa-list-ul"></i>
+                <span>Lists</span>
+            </div> -->
+            
+            <div class="nav-item">
+                <i class="far fa-user"></i>
+                <span>Profile</span>
+                <a href="/profile">.</a>
+            </div>
+            
+            <!-- <div class="nav-item">
+                <i class="fas fa-ellipsis-h"></i>
+                <span>More</span>
+            </div>
+             -->
+            <button class="flitter-btn">Flitt</button>
+            
+            <div class="profile-preview">
+                <div class="profile-details">
+                    <img src="/profile.jpg" alt="Profile Picture" class="profile-pic">
+                    <div class="profile-info">
+                        <div class="profile-name"><%= user.name %></div>
+                        <div class="profile-handle">@<%= user.handle %></div>
+                    </div>
+                </div>
+                <div class="profile-more">
+                    <i class="fas fa-ellipsis-h"></i>
+                </div>
+            
+                <!-- Logout Dropdown Menu -->
+                <div class="logout-menu">
+                    <button class="logout-button">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <a href="api/logout">Logout</a>
+                    </button>
+                </div>
+            
+            </div>
+            
+            <!-- Logout Dropdown Menu -->
+            <div class="logout-menu">
+                <div class="logout-menu-item">Add an existing account</div>
+                <div class="logout-menu-item logout">Log out @<%= user.handle %></div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+<!-- Main Content -->
+<div class="main-content">
+    <div class="profile-header">
+        <div class="back-arrow">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div>
+            <div class="profile-title">John Doe</div>
+            <div class="profile-subtitle">127 Flitts</div>
+        </div>
+    </div>
+    
+    <div class="profile-banner" style="background-image: url('banner-image.jpg');"></div>
+    
+    <div class="profile-avatar">
+        <img src="avatar-image.jpg" alt="John Doe's profile picture" class="avatar-img">
+        <!-- Alternate version with letter avatar (uncomment if needed)
+        <div class="logo-letter" style="width: 100%; height: 100%; border-radius: 50%; background-color: #000; color: #fff; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 2rem;">
+            J
+        </div>
+        -->
+    </div>
+    
+    <!-- Option 1: For current user -->
+    <button class="edit-profile-btn">Edit profile</button>
+    
+    <!-- Option 2: For other users (uncomment if needed)
+    <button class="follow-btn">
+        Follow
+    </button>
+    -->
+    
+    <!-- Verify button (for unverified users) -->
+    <button class="verify-btn">
+        <i class="fas fa-check-circle"></i>
+        Get verified
+    </button>
+    
+    <div class="profile-info">
+        <div class="profile-display-name">
+            John Doe
+            <span class="verified-badge">
+                <i class="fas fa-check-circle"></i>
+            </span>
+        </div>
+        <div class="profile-username">@johndoe</div>
+        
+        <div class="profile-bio">
+            Web developer and coffee enthusiast.<br>Building awesome experiences at Flitter.
+        </div>
+        
+        <div class="profile-metadata">
+            <div class="profile-location">
+                <i class="fas fa-map-marker-alt"></i>
+                San Francisco, CA
+            </div>
+            
+            <div class="profile-website">
+                <i class="fas fa-link"></i>
+                <a href="https://johndoe.com">johndoe.com</a>
+            </div>
+            
+            <div class="profile-join-date">
+                <i class="far fa-calendar"></i>
+                Joined January 2023
+            </div>
+        </div>
+        
+        <div class="profile-stats">
+            <div class="stat">
+                <span class="stat-value">843</span>
+                <span class="stat-label">Following</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">1,258</span>
+                <span class="stat-label">Followers</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tabs">
+        <div class="tab active">Flitts</div>
+        <div class="tab">Replies</div>
+        <div class="tab">Media</div>
+        <div class="tab">Likes</div>
+    </div>
+    
+    <!-- Example of flitts being present -->
+    <div class="flitts-container">
+        <div class="flitt-item">
+            <div class="flitt-avatar">
+                <img src="avatar-image.jpg" alt="John Doe's profile picture">
+                <!-- Letter avatar alternative
+                <div class="logo-letter small">J</div>
+                -->
+            </div>
+            <div class="flitt-content">
+                <!-- Flitt content here -->
+                <p>This is a sample flitt content placeholder.</p>
+            </div>
+        </div>
+        <!-- Additional flitt items would go here -->
+    </div>
+    
+    <!-- Alternative: Empty state (uncomment if needed)
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="far fa-comment-alt"></i>
+        </div>
+        <div class="empty-state-title">No Flitts yet</div>
+        <div class="empty-state-description">
+            When you post a Flitt, it will show up here.
+        </div>
+        <button class="flitter-btn" style="width: auto; padding: 10px 20px;">Create your first Flitt</button>
+    </div>
+    -->
+    
+    <div class="who-to-follow">
+        <div class="follow-header">Who to follow</div>
+        
+        <div class="follow-item">
+            <img src="suggested-user1.jpg" alt="Jane Smith" class="follow-avatar">
+            <!-- Letter avatar alternative
+            <div class="follow-avatar logo-letter small" style="background-color: #000; color: #fff;">J</div>
+            -->
+            <div class="follow-info">
+                <div class="follow-name">Jane Smith</div>
+                <div class="follow-username">@janesmith</div>
+            </div>
+            <button class="follow-btn">Follow</button>
+        </div>
+        
+        <div class="follow-item">
+            <img src="suggested-user2.jpg" alt="Alex Johnson" class="follow-avatar">
+            <div class="follow-info">
+                <div class="follow-name">Alex Johnson</div>
+                <div class="follow-username">@alexj</div>
+            </div>
+            <button class="follow-btn">Follow</button>
+        </div>
+        
+        <div class="show-more">Show more</div>
+    </div>
+</div>
+        
+        <!-- Right Sidebar -->
+        <div class="right-sidebar sidebar">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search Flitter">
+            </div>
+            
+            <div class="trends">
+                <div class="section-header">
+                    Trends for you
+                    <i class="fas fa-cog trend-settings"></i>
+                </div>
+                
+                <% trends.forEach(function(trend) { %>
+                <div class="trend-item">
+                    <div class="trend-category"><%= trend.category %></div>
+                    <div class="trend-name"><%= trend.name %></div>
+                    <div class="trend-count"><%= trend.count %></div>
+                </div>
+                <% }); %>
+                
+                <div class="show-more">
+                    Show more
+                </div>
+            </div>
+            
+            <div class="follow-suggestions">
+                <div class="section-header">
+                    Who to follow
+                </div>
+                
+                <% suggestions.forEach(function(suggestion) { %>
+                <div class="follow-item">
+                    <img src="<%= suggestion.profilePic %>" alt="<%= suggestion.name %>" class="follow-profile-pic">
+                    <div class="follow-info">
+                        <div class="follow-name"><%= suggestion.name %></div>
+                        <div class="follow-handle">@<%= suggestion.handle %></div>
+                    </div>
+                    <button class="follow-btn">Follow</button>
+                </div>
+                <% }); %>
+                
+                <div class="show-more">
+                    Show more
+                </div>
+            </div>
+            
+            <div class="footer">
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Cookie Policy</a>
+                <a href="#">Accessibility</a>
+                <a href="#">Ads info</a>
+                <a href="#">More...</a>
+                <span>© <%= new Date().getFullYear() %> Flitter, Inc.</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav">
+        <div class="mobile-nav-item active">
+            <i class="fas fa-home"></i>
+        </div>
+        <div class="mobile-nav-item">
+            <i class="fas fa-search"></i>
+        </div>
+        <div class="mobile-nav-item">
+            <i class="far fa-bell"></i>
+        </div>
+        <div class="mobile-nav-item">
+            <i class="far fa-envelope"></i>
+        </div>
+    </div>
+
+    <!-- Flitt Modal -->
+    <div id="flitt-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close-modal">&times;</span>
+                <h2>Compose new Flitt</h2>
+            </div>
+            <div class="modal-body">
+                <div class="modal-compose">
+                    <img src="<%= user.profilePic %>" alt="Profile Picture" class="modal-profile-pic">
+                    <textarea class="modal-input" placeholder="What's happening?"></textarea>
+                </div>
+                <div class="modal-tools">
+                    <div class="compose-tools">
+                        <div class="compose-tool">
+                            <i class="far fa-image"></i>
+                        </div>
+                        <div class="compose-tool">
+                            <i class="fas fa-poll-h"></i>
+                        </div>
+                        <div class="compose-tool">
+                            <i class="far fa-smile"></i>
+                        </div>
+                        <div class="compose-tool">
+                            <i class="far fa-calendar"></i>
+                        </div>
+                    </div>
+                    <button class="compose-button modal-post-btn" disabled>Flitt</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.querySelectorAll('.follow-avatar').forEach(function(avatar) {
+            const bgColor = avatar.getAttribute('data-bg-color');
+            const textColor = avatar.getAttribute('data-text-color');
+            avatar.style.backgroundColor = bgColor;
+            avatar.style.color = textColor;
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
