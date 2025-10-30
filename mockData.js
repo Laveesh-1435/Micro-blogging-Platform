@@ -304,12 +304,151 @@ const getRandomRecentTime = () => {
     profilePic: user.profilePic,
     bio: user.bio
   }));
-  
+  const mockUser = {
+    name: "John Doe",
+    handle: "johndoe",
+    profilePic: "profile.jpg",
+    bannerImage: "lights.jpg",
+    bio: "Web developer and coffee enthusiast.\nBuilding awesome experiences at Flitter.",
+    location: "San Francisco, CA",
+    website: "https://johndoe.com",
+    joinDate: "January 2023",
+    following: 843,
+    followers: 1258,
+    flitts: [
+        { content: "This is a sample flitt content placeholder.", timestamp: "Just now" },
+        { content: "Another flitt to test rendering.", timestamp: "2h ago" }
+    ],
+    replies: [
+        { 
+            content: "Great point about AI development!", 
+            timestamp: "1h ago",
+            originalFlitt: {
+                author: "Jane Smith",
+                authorPic: "lights.jpg",
+                content: "Excited about the latest AI breakthroughs!"
+            }
+        },
+        { 
+            content: "Totally agree with your perspective.", 
+            timestamp: "3h ago",
+            originalFlitt: {
+                author: "Tech Insider",
+                authorPic: "lights.jpg",
+                content: "Machine learning is changing everything we know about technology."
+            }
+        }
+    ],
+    media: [
+        { 
+            url: "lights.jpg", 
+            description: "Coding setup", 
+            timestamp: "1 day ago" 
+        },
+        { 
+            url: "portrait.jpg", 
+            description: "Coffee break", 
+            timestamp: "2 days ago" 
+        },
+        { 
+            url: "boys.jpg", 
+            description: "Weekend project", 
+            timestamp: "3 days ago" 
+        }
+    ],
+    likes: [
+        {
+            author: "Tech Guru",
+            handle: "techguru",
+            authorPic: "profile.jpg",
+            content: "Just launched my latest open-source project!",
+            timestamp: "4h ago"
+        },
+        {
+            author: "Innovation Weekly",
+            handle: "innovationweekly",
+            authorPic: "profile.jpg",
+            content: "Top 10 tech trends to watch in 2025",
+            timestamp: "1 day ago"
+        }
+    ]
+};
+const mockBookmarks = [
+    {
+        id: 1,
+        author: 'Jane Smith',
+        handle: 'janesmith',
+        authorPic: 'lights.jpg',
+        content: 'Just finished an amazing project at work! Can\'t wait to share more details soon. Hard work really pays off. 💪🏼 #WorkLife #Success',
+        timestamp: '2h ago',
+        likes: 35,
+        replies: 4
+    },
+    {
+        id: 2,
+        author: 'Tech Insider',
+        handle: 'techinsider',
+        authorPic: 'boys.jpg',
+        content: 'Breaking: New AI developments set to revolutionize multiple industries. The future is now! 🚀 #Technology #Innovation',
+        timestamp: '5h ago',
+        likes: 98,
+        replies: 12
+    }
+];
+
+
+// Mock trends data
+const trends = [
+    { category: "Technology · Trending", name: "#AI", count: "120K Tweets" },
+    { category: "Sports · Trending", name: "#IPL2025", count: "85K Tweets" }
+];
+
+// Mock suggestions
+const suggestions = [
+    { name: "Jane Smith", handle: "janesmith", profilePic: "boys.jpg" },
+    { name: "Alex Johnson", handle: "alexj", profilePic: "portrait.jpg" }
+];
+const mockTrends = [
+    {
+        category: 'Technology',
+        name: '#AIRevolution',
+        count: '54.3K'
+    },
+    {
+        category: 'Sports',
+        name: '#WorldCup',
+        count: '342K'
+    },
+    {
+        category: 'Entertainment',
+        name: '#MovieNight',
+        count: '22.1K'
+    }
+];
+
+const mockFollowSuggestions = [
+    {
+        name: 'Tech Guru',
+        handle: 'techguru',
+        profilePic: 'boys.jpg'
+    },
+    {
+        name: 'Design Master',
+        handle: 'designmaster',
+        profilePic: 'lights.jpg'
+    },
+    {
+        name: 'Travel Blog',
+        handle: 'travelblog',
+        profilePic: 'portrait.jpg'
+    }
+];
   // Export all data
   module.exports = {
     userData,
     users,
     flittsData,
     trendsData,
-    suggestionsData
+    suggestionsData,
+     mockUser, mockBookmarks, trends, suggestions, mockTrends, mockFollowSuggestions 
   };

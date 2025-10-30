@@ -179,71 +179,33 @@
         .close-button:hover {
             background-color: #0069d9;
         }
-
-        .error-message {
-            color: white;
-            background-color: #f44336;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            margin-top: 20px;
-            display: none;
-        }
-        .success-message {
-            color: white;
-            background-color: #4CAF50;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            display: none;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Welcome Back</h1>
         <form action="/api/login" method="POST">
-            <div class="form-group" style="animation-delay: 0.2s;">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required autocomplete="off">
-            </div>
-            <div class="form-group" style="animation-delay: 0.4s;">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit">Login</button>
-        </form>
+  <div class="form-group">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" required>
+  </div>
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+  </div>
+  <button type="submit">Register</button>
+</form>
+
+
+
         <div class="links">
             <a href="/register">Don't have an account? Register</a>
         </div>
-    
-
-    <div id="invalidError" class="error-message">
-        Invalid username or password. Please try again.
     </div>
-    
-    <div id="serverError" class="error-message">
-        Server error occurred. Please try again later.
-    </div>
-    
-    <div id="logoutError" class="error-message">
-        Error occurred during logout. Please try again.
-    </div>
-</div>  
-   
-    <% if (locals.error) { %>
-    <div class="error-popup">
-        <div class="popup-content">
-            <p><%= error %></p>
-            <button class="close-button">Close</button>
-        </div>
-    </div>
-    <% } %>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -263,25 +225,6 @@
                 }, 5000);
             }
         });
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            
-            // Check for error messages
-            if(urlParams.get('error') === 'invalid') {
-                document.getElementById('invalidError').style.display = 'block';
-            } 
-            else if(urlParams.get('error') === 'server') {
-                document.getElementById('serverError').style.display = 'block';
-            }
-            else if(urlParams.get('error') === 'logout') {
-                document.getElementById('logoutError').style.display = 'block';
-            }
-            
-            // Check for success message
-            if(urlParams.get('registered') === 'true') {
-                document.getElementById('registrationSuccess').style.display = 'block';
-            }
-        }
     </script>
 </body>   
 </html>
