@@ -85,35 +85,37 @@
             </div>
             
             <div class="compose-area">
-                <div class="compose-input-container">
-                    <img src="<%= user.profilePic %>" alt="Profile" class="compose-profile-pic">
-                    <textarea class="compose-input" placeholder="What's happening?"></textarea>
-                </div>
-                
-                <div class="compose-actions">
-                    <div class="compose-tools">
-                        <div class="compose-tool" title="Media">
-                            <i class="far fa-image"></i>
-                        </div>
-                        <div class="compose-tool" title="GIF">
-                            <i class="far fa-file-image"></i>
-                        </div>
-                        <div class="compose-tool" title="Poll">
-                            <i class="fas fa-poll-h"></i>
-                        </div>
-                        <div class="compose-tool" title="Emoji">
-                            <i class="far fa-smile"></i>
-                        </div>
-                        <div class="compose-tool" title="Schedule">
-                            <i class="far fa-calendar"></i>
-                        </div>
-                        <div class="compose-tool" title="Location">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
+                <form action="/api/posts" method="POST">
+                    <div class="compose-input-container">
+                        <img src="<%= user.profilePic %>" alt="Profile" class="compose-profile-pic">
+                        <textarea name="content" class="compose-input" placeholder="What's happening?" required></textarea>
                     </div>
                     
-                    <button class="compose-button" disabled>Flitt</button>
-                </div>
+                    <div class="compose-actions">
+                        <div class="compose-tools">
+                            <div class="compose-tool" title="Media">
+                                <i class="far fa-image"></i>
+                            </div>
+                            <div class="compose-tool" title="GIF">
+                                <i class="far fa-file-image"></i>
+                            </div>
+                            <div class="compose-tool" title="Poll">
+                                <i class="fas fa-poll-h"></i>
+                            </div>
+                            <div class="compose-tool" title="Emoji">
+                                <i class="far fa-smile"></i>
+                            </div>
+                            <div class="compose-tool" title="Schedule">
+                                <i class="far fa-calendar"></i>
+                            </div>
+                            <div class="compose-tool" title="Location">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="compose-button">Flitt</button>
+                    </div>
+                </form>
             </div>
             
             <div class="feed">
@@ -286,27 +288,29 @@
                 <h2>Compose new Flitt</h2>
             </div>
             <div class="modal-body">
-                <div class="modal-compose">
-                    <img src="<%= user.profilePic %>" alt="Profile Picture" class="modal-profile-pic">
-                    <textarea class="modal-input" placeholder="What's happening?"></textarea>
-                </div>
-                <div class="modal-tools">
-                    <div class="compose-tools">
-                        <div class="compose-tool">
-                            <i class="far fa-image"></i>
-                        </div>
-                        <div class="compose-tool">
-                            <i class="fas fa-poll-h"></i>
-                        </div>
-                        <div class="compose-tool">
-                            <i class="far fa-smile"></i>
-                        </div>
-                        <div class="compose-tool">
-                            <i class="far fa-calendar"></i>
-                        </div>
+                <form action="/api/posts" method="POST">
+                    <div class="modal-compose">
+                        <img src="<%= user.profilePic %>" alt="Profile Picture" class="modal-profile-pic">
+                        <textarea name="content" class="modal-input" placeholder="What's happening?" required></textarea>
                     </div>
-                    <button class="compose-button modal-post-btn" disabled>Flitt</button>
-                </div>
+                    <div class="modal-tools">
+                        <div class="compose-tools">
+                            <div class="compose-tool">
+                                <i class="far fa-image"></i>
+                            </div>
+                            <div class="compose-tool">
+                                <i class="fas fa-poll-h"></i>
+                            </div>
+                            <div class="compose-tool">
+                                <i class="far fa-smile"></i>
+                            </div>
+                            <div class="compose-tool">
+                                <i class="far fa-calendar"></i>
+                            </div>
+                        </div>
+                        <button type="submit" class="compose-button modal-post-btn">Flitt</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

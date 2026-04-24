@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const MongoStore = require('connect-mongo');
 const dotenv = require('dotenv');
+const Post = require('./models/Post');
 dotenv.config(); // Load environment variables
 
 const authRoutes = require('./api/apiRoutes');
@@ -74,14 +75,37 @@ app.get('/', async (req, res) => {
      // Replace mockSuggestions with real data
   });
 });
-app.get('/dashboard', (req, res) => {
-  // Pass the mock data to the template
-  res.render('dashboard', {
-    user: mockData.userData,
-    flitts: mockData.flittsData,
-    trends: mockData.trendsData,
-    suggestions: mockData.suggestionsData
-  });
+// app.get('/dashboard', (req, res) => {
+//   // Pass the mock data to the template
+//   res.render('dashboard', {
+//     user: mockData.userData,
+//     flitts: mockData.flittsData,
+//     trends: mockData.trendsData,
+//     suggestions: mockData.suggestionsData
+//   });
+// });
+app.get(['/', '/dashboard'], async (req, res) => {
+  try {
+    // If you want to protect the dashboard from un-logged in users:
+    if (!req.session.user) {
+      return res.redirect('/login');
+    }
+
+    // Fetch all posts from DB, populate the author's username, and sort newest first
+    const posts = await Post.find()
+      .populate('author', 'username') 
+      .sort({ createdAt: -1 });
+
+    res.render('dashboard', {
+      user: req.session.user, // Pass the actual logged-in user instead of mockData
+      flitts: posts,          // Pass the real posts from the database
+      trends: mockData.trendsData,          // Leaving mocks for other UI elements
+      suggestions: mockData.suggestionsData
+    });
+  } catch (error) {
+    console.error('❌ Error fetching dashboard:', error);
+    res.status(500).send('Server Error');
+  }
 });
 
 app.get('/bookmarks', (req, res) => {
