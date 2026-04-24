@@ -120,15 +120,14 @@ const getRandomRecentTime = () => {
   
   // Generate 40 flitts (posts) - MODIFIED to ensure every flitt has an image
   const flittsData = Array.from({ length: 40 }, (_, index) => {
-    // Randomly select an author from the users list, but not the logged-in user
-    const authorIndex = 1 + getRandomNumber(0, users.length - 2); // Skip the first user (logged-in user)
+    
+    const authorIndex = 1 + getRandomNumber(0, users.length - 2); 
     const author = users[authorIndex];
     
-    // Ensure every post has an image by removing the random selection
-    // and always assigning an image from the postImages array
+   
     const imageIndex = index % postImages.length;
     
-    // Randomly generate between 0-3 hashtags
+
     const postHashtags = Array.from({ length: getRandomNumber(0, 3) }, () => {
       return hashtags[getRandomNumber(0, hashtags.length - 1)];
     });
