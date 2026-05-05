@@ -8,19 +8,20 @@ const cors = require('cors');
 const MongoStore = require('connect-mongo');
 const dotenv = require('dotenv');
 const Post = require('./models/Post');
+const User = require('./models/User'); 
 dotenv.config(); // Load environment variables
 
 const authRoutes = require('./api/apiRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 const logger = require('./middlewares/logger');
 const auth = require('./middlewares/auth');
-const User = require('./models/User'); // Make sure you have the correct User model
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 
 // MongoDB Atlas Connection
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log('✅ Connected to MongoDB Atlas'))
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('✅ Connected to MongoDB Atlas'))
   .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // MongoDB Session Store
@@ -41,7 +42,7 @@ app.use(helmet({
   }
 }));
 app.use(morgan('dev'));
-app.use(cors({origin:'http://localhost:8000'})); // Modify as per your frontend URL
+app.use(cors({origin:'http://localhost:8000'})); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -61,32 +62,13 @@ app.use(session({
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-const mockData = require('./mockData');
-const { mockUser, mockBookmarks, trends, suggestions, mockTrends, mockFollowSuggestions } = require('./mockData');
-// Routes
-app.get('/', async (req, res) => {
-  // Fetch user data from session (example)
-  const user = await User.findById(req.session.userId); // assuming session stores userId
-  res.render('dashboard', {
-     user: mockData.userData,
-    flitts: mockData.flittsData,
-    trends: mockData.trendsData,
-    suggestions: mockData.suggestionsData
-     // Replace mockSuggestions with real data
-  });
-});
-// app.get('/dashboard', (req, res) => {
-//   // Pass the mock data to the template
-//   res.render('dashboard', {
-//     user: mockData.userData,
-//     flitts: mockData.flittsData,
-//     trends: mockData.trendsData,
-//     suggestions: mockData.suggestionsData
-//   });
-// });
+// ==========================================
+// VIEW ROUTES (Now using live DB data)
+// ==========================================
+
 app.get(['/', '/dashboard'], async (req, res) => {
   try {
-    // If you want to protect the dashboard from un-logged in users:
+    // Protect dashboard from un-logged in users
     if (!req.session.user) {
       return res.redirect('/login');
     }
@@ -97,10 +79,10 @@ app.get(['/', '/dashboard'], async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.render('dashboard', {
-      user: req.session.user, // Pass the actual logged-in user instead of mockData
-      flitts: posts,          // Pass the real posts from the database
-      trends: mockData.trendsData,          // Leaving mocks for other UI elements
-      suggestions: mockData.suggestionsData
+      user: req.session.user, // Actual logged-in user from session
+      flitts: posts,          // Real posts from the database
+      trends: [],             // Replaced mockData with empty array to prevent EJS crashes
+      suggestions: []         // Replaced mockData with empty array
     });
   } catch (error) {
     console.error('❌ Error fetching dashboard:', error);
@@ -108,28 +90,59 @@ app.get(['/', '/dashboard'], async (req, res) => {
   }
 });
 
-app.get('/bookmarks', (req, res) => {
-    res.render('bookmark', { 
-        user: mockUser,
-        bookmarks: mockBookmarks,
-        trends: mockTrends,
-        suggestions: mockFollowSuggestions
-    });
-});
-// Profile route
-app.get('/profile', (req, res) => {
-    res.render('profile', {
-        user: mockUser,
-        trends,
-        suggestions
-    });
+app.get('/bookmarks', async (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+
+  res.render('bookmark', { 
+      user: req.session.user,
+      bookmarks: [], // Replace with actual DB query when you build bookmark functionality
+      trends: [],
+      suggestions: []
+  });
 });
 
+app.get('/profile', async (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+
+  try {
+    // Optional: Fetch only the posts made by the logged-in user for their profile
+    const userPosts = await Post.find({ author: req.session.user._id }).sort({ createdAt: -1 });
+
+    res.render('profile', {
+        user: req.session.user,
+        flitts: userPosts, // Pass their specific posts to the profile
+        trends: [],
+        suggestions: []
+    });
+  } catch (error) {
+    console.error('❌ Error fetching profile:', error);
+    res.status(500).send('Server Error');
+  }
+});
+
+// ==========================================
+// AUTH & UTILITY ROUTES
+// ==========================================
 
 app.get('/register', (req, res) => {
   const errorMessage = req.query.error || null;
   res.render('register', { error: errorMessage });
 });
+
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy(); // End the session
+  res.redirect('/login');
+});
+
+app.use('/api', authRoutes);
 
 // Session Test Route
 app.get('/session-test', (req, res) => {
@@ -141,21 +154,8 @@ app.get('/session-test', (req, res) => {
   res.render('session-test', { views: req.session.views });
 });
 
-// Authentication routes
-app.use('/api', authRoutes);
-
 // Static files setup
 app.use(express.static('public'));
-
-// Login and Logout routes
-app.get('/login', (req, res) => {
-  res.render('login');
-});
-
-app.get('/logout', (req, res) => {
-  req.session.destroy(); // End the session
-  res.redirect('/login');
-});
 
 // Error handling middleware
 app.use(errorHandler);
