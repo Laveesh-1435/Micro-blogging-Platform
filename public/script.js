@@ -263,7 +263,7 @@ composeInput.addEventListener('input', () => {
     updateButtonState(composeInput, composeButton);
 });
 
-// Compose button click
+/*
 composeButton.addEventListener('click', () => {
     if (composeInput.value.trim()) {
         createFlitt(composeInput.value);
@@ -272,6 +272,7 @@ composeButton.addEventListener('click', () => {
         showToast('Your flitt was posted!');
     }
 });
+*/
 
 // Tabs functionality
 tabs.forEach(tab => {
@@ -348,15 +349,15 @@ modalInput.addEventListener('input', () => {
     updateButtonState(modalInput, modalPostBtn);
 });
 
-modalPostBtn.addEventListener('click', () => {
-    if (modalInput.value.trim()) {
-        createFlitt(modalInput.value);
-        modalInput.value = '';
-        updateButtonState(modalInput, modalPostBtn);
-        modal.style.display = 'none';
-        showToast('Your flitt was posted!');
-    }
-});
+// modalPostBtn.addEventListener('click', () => {
+//     if (modalInput.value.trim()) {
+//         createFlitt(modalInput.value);
+//         modalInput.value = '';
+//         updateButtonState(modalInput, modalPostBtn);
+//         modal.style.display = 'none';
+//         showToast('Your flitt was posted!');
+//     }
+// });
 
 // Follow button functionality
 followButtons.forEach(button => {

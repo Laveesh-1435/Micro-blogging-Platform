@@ -88,7 +88,7 @@
                 <form action="/api/posts" method="POST">
                     <div class="compose-input-container">
                         <img src="<%= user.profilePic %>" alt="Profile" class="compose-profile-pic">
-                        <textarea name="content" class="compose-input" placeholder="What's happening?" required></textarea>
+                        <textarea name="content" class="compose-input" placeholder="What's on your mind?" required></textarea>  
                     </div>
                     
                     <div class="compose-actions">
@@ -133,7 +133,7 @@
                             </div>
                         </div>
                         <div class="flitt-text">
-                            <%= flitt.text %>
+                            <%= flitt.content %>
                             <% if (flitt.hashtags && flitt.hashtags.length > 0) { %>
                                 <% flitt.hashtags.forEach(function(hashtag) { %>
                                     <a href="#" class="flitt-link">#<%= hashtag %></a>
@@ -144,9 +144,9 @@
                             <img src="<%= flitt.image %>" alt="<%= flitt.imageAlt || 'Flitt Image' %>" class="flitt-img">
                         <% } %>
                         <div class="flitt-actions">
-                            <div class="flitt-action reply" data-count="<%= flitt.replies.length %>">
+                            <div class="flitt-action reply" data-count="<%= flitt.replies ? flitt.replies.length : 0 %>">
                                 <i class="far fa-comment"></i>
-                                <span><%= flitt.replies.length %></span>
+                                <span><%= flitt.replies ? flitt.replies.length : 0 %></span>
                             </div>
                             <div class="flitt-action reflitt" data-count="<%= flitt.reflitts %>">
                                 <i class="fas fa-retweet"></i>
