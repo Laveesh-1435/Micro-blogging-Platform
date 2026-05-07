@@ -73,18 +73,22 @@ app.get(['/', '/dashboard'], async (req, res) => {
       return res.redirect('/login');
     }
 
-    // Fetch all posts from DB, populate the author's username, and sort newest first
-    const posts = await Post.find()
-      .populate('author', 'username') 
-      .sort({ createdAt: -1 });
+    /// Fetch posts...
+    const posts = await Post.find().populate('author', 'username name profilePic').sort({ createdAt: -1 });
+
+    // NEW: Fetch up to 5 users who are NOT the currently logged-in user
+    const suggestedUsers = await User.find({ 
+        _id: { $ne: req.session.user._id } 
+    }).limit(5);
 
     res.render('dashboard', {
-      user: req.session.user, // Actual logged-in user from session
-      flitts: posts,          // Real posts from the database
-      trends: [],             // Replaced mockData with empty array to prevent EJS crashes
-      suggestions: []         // Replaced mockData with empty array
+      user: req.session.user, 
+      flitts: posts,          
+      trends: [],             
+      suggestions: suggestedUsers // Pass the database users here!
     });
-  } catch (error) {
+  } 
+  catch (error) {
     console.error('❌ Error fetching dashboard:', error);
     res.status(500).send('Server Error');
   }

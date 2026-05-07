@@ -4,7 +4,14 @@ const bcrypt = require('bcryptjs'); // Using bcryptjs for password hashing
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  email: { type: String, required: true, unique: true }  // Ensure email is required and unique
+  email: { type: String, required: true, unique: true },
+  name: { type: String, default: '' },
+  profilePic: { type: String, default: '/profile.jpg' },
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  bio: { type: String, default: 'Hello, I am using Flitter!' },
+  location: { type: String, default: '' },
+  website: { type: String, default: '' },
 });
 
 // Hash password before saving

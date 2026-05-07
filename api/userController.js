@@ -17,7 +17,12 @@ exports.register = async (req, res) => {
     }
 
     // Create a new user and save to database
-    const newUser = new User({ username, password, email });
+    const newUser = new User({ 
+        username: username, 
+        password: password, 
+        email: email,
+        name: '' 
+    });
     await newUser.save();
 
     res.redirect('/login?registered=true'); // Redirect to login after successful registration
@@ -42,7 +47,12 @@ exports.login = async (req, res) => {
     const isPasswordValid = await user.comparePassword(password);
 
     if (isPasswordValid) {
-      req.session.user = user; // Store user in session
+      req.session.user = {
+        _id: user._id,
+        email: user.email,
+        name: user.name || user.username,
+        profilePic: user.profilePic || '/profile.jpg'
+      };
       res.redirect('/dashboard'); // Redirect to dashboard if login is successful
     } else {
       res.redirect('/login?error=invalidPassword'); // Redirect if password is invalid
@@ -59,6 +69,31 @@ exports.getProfile = (req, res) => {
     return res.redirect('/login');
   }
   res.render('profile', { user: req.user }); 
+};
+
+exports.followUser = async (req, res) => {
+    try {
+        const targetUserId = req.params.id;
+        const currentUserId = req.session.user._id;
+
+        // Prevent following yourself
+        if (targetUserId === currentUserId.toString()) return res.redirect('back');
+
+        // Add target user to current user's "following" list
+        await User.findByIdAndUpdate(currentUserId, {
+            $addToSet: { following: targetUserId } // $addToSet prevents duplicates
+        });
+
+        // Add current user to target user's "followers" list
+        await User.findByIdAndUpdate(targetUserId, {
+            $addToSet: { followers: currentUserId }
+        });
+
+        res.redirect('back');
+    } catch (error) {
+        console.error("❌ Error following user:", error);
+        res.status(500).send("Server Error");
+    }
 };
 
 // Logout the user
@@ -78,3 +113,4 @@ exports.logout = async (req, res) => {
     res.redirect('/login?error=server'); // Redirect if logout fails
   }
 };
+

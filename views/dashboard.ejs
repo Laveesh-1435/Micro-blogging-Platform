@@ -44,7 +44,7 @@
                 <div class="profile-details">
                     <img src="/profile.jpg" alt="Profile Picture" class="profile-pic">
                     <div class="profile-info">
-                        <div class="profile-name"><%= user.name %></div>
+                        <div class="profile-name"><%= (user.name && user.name !== 'New User') ? user.name : user.username %></div>
                         <div class="profile-handle">@<%= user.username %></div>
                     </div>
                 </div>
@@ -118,11 +118,18 @@
                     <img src="<%= flitt.author.profilePic %>" alt="<%= flitt.author.name %> Profile" class="flitt-profile-pic">
                     <div class="flitt-content">
                         <div class="flitt-header">
-                            <span class="flitt-name"><%= flitt.author.name %></span>
+                            <span class="flitt-name"><%= (flitt.author.name && flitt.author.name !== 'New User') ? flitt.author.name : flitt.author.username %></span>
                             <span class="flitt-handle">@<%= flitt.author.username %></span>
                             <span class="flitt-time">· <%= flitt.timePosted %></span>
                             <div class="flitt-more">
                                 <i class="fas fa-ellipsis-h"></i>
+                                <% if (user._id.toString() === flitt.author._id.toString()) { %>
+                                    <form action="/api/posts/<%= flitt._id %>/delete" method="POST" style="display:inline; margin-left: 10px;">
+                                        <button type="submit" style="background:none; border:none; color: red; cursor: pointer;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                <% } %>
                             </div>
                         </div>
                         <div class="flitt-text">
@@ -223,18 +230,19 @@
             </div>
             
             <div class="follow-suggestions">
-                <div class="section-header">
-                    Who to follow
-                </div>
-                
+                <div class="section-header">Who to follow</div>
+    
                 <% suggestions.forEach(function(suggestion) { %>
                 <div class="follow-item">
-                    <img src="<%= suggestion.profilePic %>" alt="<%= suggestion.name %>" class="follow-profile-pic">
+                    <img src="<%= suggestion.profilePic || '/profile.jpg' %>" alt="<%= suggestion.name %>" class="follow-profile-pic">
                     <div class="follow-info">
-                        <div class="follow-name"><%= suggestion.name %></div>
-                        <div class="follow-handle">@<%= suggestion.username %></div>
+                        <div class="follow-name"><%= suggestion.name || suggestion.username %></div>
+                        <div class="follow-name"><%= (suggestion.name && suggestion.name !== 'New User') ? suggestion.name : suggestion.username %></div>
+                        <!-- <div class="follow-handle">@<%= suggestion.username %></div> -->
                     </div>
-                    <button class="follow-btn">Follow</button>
+                    <form action="/api/users/<%= suggestion._id %>/follow" method="POST">
+                        <button type="submit" class="follow-btn">Follow</button>
+                    </form>
                 </div>
                 <% }); %>
                 

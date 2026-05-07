@@ -73,7 +73,7 @@
                     <i class="fas fa-arrow-left"></i>
                 </div>
                 <div>
-                    <div class="profile-title"><%= user.name %></div>
+                    <div class="profile-title"><%= (user.name && user.name !== 'New User') ? user.name : user.username %></div>
                     <div class="profile-subtitle"><%= user.flitts ? user.flitts.length : 0 %> Flitts</div>
                 </div>
             </div>
@@ -98,7 +98,14 @@
                         <i class="fas fa-check-circle"></i>
                     </span>
                 </div>
-                <div class="profile-username">@<%= user.username %></div>
+
+                <div class="profile-display-name">
+                    <%= (user.name && user.name !== 'New User') ? user.name : user.username %>
+                    <span class="verified-badge">
+                        <i class="fas fa-check-circle"></i>
+                    </span>
+                </div>
+                <!-- <div class="profile-username">@<%= user.username %></div> -->
                 
                 <% if (user.website) { %>
                     <div class="profile-bio">
@@ -148,21 +155,21 @@
             
             <div id="flitts-content" class="tab-content active">
                 <div class="flitts-container">
-                    <% if (user.flitts && user.flitts.length > 0) { %>
-                        <% user.flitts.forEach(function(flitt) { %>
+                    <% if (flitts && flitts.length > 0) { %>
+                        <% flitts.forEach(function(flitt) { %>
                         <div class="flitt-item">
                             <div class="flitt-avatar">
                                 <img src="<%= user.profilePic || '/profile.jpg' %>" alt="Profile picture">
                             </div>
                             <div class="flitt-content">
                                 <p><%= flitt.content %></p>
-                                <div class="flitt-timestamp"><%= flitt.timestamp || flitt.timePosted %></div>
+                                <div class="flitt-timestamp"><%= flitt.createdAt ? new Date(flitt.createdAt).toLocaleString() : 'Just now' %></div>
                             </div>
                         </div>
                         <% }); %>
-                 <% } else { %>
+                    <% } else { %>
                         <div class="no-content">
-                            <p>No flitts posted yet</p>
+                            <p>No Flitts posted yet.</p>
                         </div>
                     <% } %>
                 </div>
@@ -286,7 +293,8 @@
                 <div class="follow-item">
                     <img src="<%= suggestion.profilePic %>" alt="<%= suggestion.name %>" class="follow-profile-pic">
                     <div class="follow-info">
-                        <div class="follow-name"><%= suggestion.name %></div>
+                        <div class="follow-name"><%= suggestion.name || suggestion.username %></div>
+                        <div class="follow-name"><%= (suggestion.name && suggestion.name !== 'New User') ? suggestion.name : suggestion.username %></div>
                         <div class="follow-handle">@<%= suggestion.username %></div>
                     </div>
                     <button class="follow-btn">Follow</button>

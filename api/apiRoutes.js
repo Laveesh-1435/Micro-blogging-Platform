@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('./userController');
-const postController = require('./postController'); // Add this line
+const postController = require('./postController'); 
 
 router.post('/login', userController.login);
 router.post('/register', userController.register);
 router.get('/logout', userController.logout);
 
-router.post('/posts', postController.createPost); // Add this line
+router.post('/posts', postController.createPost);
+router.post('/posts/:id/delete', postController.deletePost);
+router.post('/users/:id/follow', userController.followUser);
 
 module.exports = router;
