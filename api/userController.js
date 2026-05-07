@@ -53,6 +53,14 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.getProfile = (req, res) => {
+  // req.user comes from your auth middleware
+  if (!req.user) {
+    return res.redirect('/login');
+  }
+  res.render('profile', { user: req.user }); 
+};
+
 // Logout the user
 exports.logout = async (req, res) => {
   try {

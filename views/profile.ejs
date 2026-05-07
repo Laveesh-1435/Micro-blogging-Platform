@@ -1,5 +1,4 @@
-
-</html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +14,6 @@
     </div>
     
     <div class="container">
-        <!-- Left Sidebar -->
         <div class="left-sidebar sidebar">
             <div class="logo">
                 <i class="fab fa-twitter animate-pulse"></i>
@@ -48,7 +46,7 @@
                     <img src="<%= user.profilePic %>" alt="Profile Picture" class="profile-pic">
                     <div class="profile-info">
                         <div class="profile-name"><%= user.name %></div>
-                        <div class="profile-handle">@<%= user.handle %></div>
+                        <div class="profile-handle">@<%= user.username %></div>
                     </div>
                 </div>
                 <div class="profile-more">
@@ -65,11 +63,10 @@
             
             <div class="logout-menu">
                 <div class="logout-menu-item">Add an existing account</div>
-                <div class="logout-menu-item logout">Log out @<%= user.handle %></div>
+                <div class="logout-menu-item logout">Log out @<%= user.username %></div>
             </div>
         </div>
         
-        <!-- Main Content -->
         <div class="main-content">
             <div class="profile-header">
                 <div class="back-arrow">
@@ -77,7 +74,7 @@
                 </div>
                 <div>
                     <div class="profile-title"><%= user.name %></div>
-                    <div class="profile-subtitle"><%= user.flitts.length %> Flitts</div>
+                    <div class="profile-subtitle"><%= user.flitts ? user.flitts.length : 0 %> Flitts</div>
                 </div>
             </div>
             
@@ -101,22 +98,28 @@
                         <i class="fas fa-check-circle"></i>
                     </span>
                 </div>
-                <div class="profile-username">@<%= user.handle %></div>
+                <div class="profile-username">@<%= user.username %></div>
                 
-                <div class="profile-bio">
-                    <%= user.bio %>
-                </div>
+                <% if (user.website) { %>
+                    <div class="profile-bio">
+                        <%= user.bio %>
+                    </div>
+                <% } %>
                 
                 <div class="profile-metadata">
-                    <div class="profile-location">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <%= user.location %>
-                    </div>
+                    <% if (user.website) { %>
+                        <div class="profile-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <%= user.location %>
+                        </div>
+                    <% } %>
                     
-                    <div class="profile-website">
-                        <i class="fas fa-link"></i>
-                        <a href="<%= user.website %>"><%= user.website.replace('https://', '') %></a>
-                    </div>
+                    <% if (user.website) { %>
+                        <div class="profile-website">
+                            <i class="fas fa-link"></i>
+                            <a href="<%= user.website %>"><%= user.website.replace('https://', '') %></a>
+                        </div>
+                    <% } %>
                     
                     <div class="profile-join-date">
                         <i class="far fa-calendar"></i>
@@ -143,24 +146,28 @@
                 <div class="tab" data-tab="likes">Likes</div>
             </div>
             
-            <!-- Flitts Content -->
             <div id="flitts-content" class="tab-content active">
                 <div class="flitts-container">
-                    <% user.flitts.forEach(function(flitt) { %>
-                    <div class="flitt-item">
-                        <div class="flitt-avatar">
-                            <img src="<%= user.profilePic %>" alt="<%= user.name %>'s profile picture">
+                    <% if (user.flitts && user.flitts.length > 0) { %>
+                        <% user.flitts.forEach(function(flitt) { %>
+                        <div class="flitt-item">
+                            <div class="flitt-avatar">
+                                <img src="<%= user.profilePic || '/profile.jpg' %>" alt="Profile picture">
+                            </div>
+                            <div class="flitt-content">
+                                <p><%= flitt.content %></p>
+                                <div class="flitt-timestamp"><%= flitt.timestamp || flitt.timePosted %></div>
+                            </div>
                         </div>
-                        <div class="flitt-content">
-                            <p><%= flitt.content %></p>
-                            <div class="flitt-timestamp"><%= flitt.timestamp %></div>
+                        <% }); %>
+                 <% } else { %>
+                        <div class="no-content">
+                            <p>No flitts posted yet</p>
                         </div>
-                    </div>
-                    <% }); %>
+                    <% } %>
                 </div>
             </div>
             
-            <!-- Replies Content -->
             <div id="replies-content" class="tab-content">
                 <div class="replies-container">
                     <% if (user.replies && user.replies.length > 0) { %>
@@ -172,7 +179,7 @@
                             <div class="reply-content">
                                 <div class="reply-header">
                                     <span class="reply-author"><%= user.name %></span>
-                                    <span class="reply-handle">@<%= user.handle %></span>
+                                    <span class="reply-handle">@<%= user.username %></span>
                                     <span class="reply-timestamp"><%= reply.timestamp %></span>
                                 </div>
                                 <p class="reply-text"><%= reply.content %></p>
@@ -194,7 +201,6 @@
                 </div>
             </div>
             
-            <!-- Media Content -->
             <div id="media-content" class="tab-content">
                 <div class="media-container">
                     <% if (user.media && user.media.length > 0) { %>
@@ -216,7 +222,6 @@
                 </div>
             </div>
             
-            <!-- Likes Content -->
             <div id="likes-content" class="tab-content">
                 <div class="likes-container">
                     <% if (user.likes && user.likes.length > 0) { %>
@@ -228,7 +233,7 @@
                             <div class="liked-flitt-content">
                                 <div class="liked-flitt-header">
                                     <span class="liked-flitt-author"><%= likedFlitt.author %></span>
-                                    <span class="liked-flitt-handle">@<%= likedFlitt.handle %></span>
+                                    <span class="liked-flitt-handle">@<%= likedFlitt.username %></span>
                                     <span class="liked-flitt-timestamp"><%= likedFlitt.timestamp %></span>
                                 </div>
                                 <p class="liked-flitt-text"><%= likedFlitt.content %></p>
@@ -247,7 +252,6 @@
             </div>
         </div>
         
-        <!-- Right Sidebar -->
         <div class="right-sidebar sidebar">
             <div class="search-container">
                 <i class="fas fa-search search-icon"></i>
@@ -283,7 +287,7 @@
                     <img src="<%= suggestion.profilePic %>" alt="<%= suggestion.name %>" class="follow-profile-pic">
                     <div class="follow-info">
                         <div class="follow-name"><%= suggestion.name %></div>
-                        <div class="follow-handle">@<%= suggestion.handle %></div>
+                        <div class="follow-handle">@<%= suggestion.username %></div>
                     </div>
                     <button class="follow-btn">Follow</button>
                 </div>
@@ -306,7 +310,6 @@
         </div>
     </div>
     
-    <!-- Flitt Modal -->
     <div id="flitt-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -316,8 +319,7 @@
             <div class="modal-body">
                 <div class="modal-compose">
                     <img src="<%= user.profilePic %>" alt="Profile Picture" class="modal-profile-pic">
-                    <textarea class="modal-input" placeholder="What
-<textarea class="modal-input" placeholder="What's happening?"></textarea>
+                    <textarea class="modal-input" placeholder="What's happening?"></textarea>
                 </div>
                 <div class="modal-tools">
                     <div class="compose-tools">
@@ -340,7 +342,6 @@
         </div>
     </div>
 
-    <!-- Mobile Navigation -->
     <div class="mobile-nav">
         <div class="mobile-nav-item active">
             <i class="fas fa-home"></i>
@@ -360,11 +361,9 @@
         // Tab Switching
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
-                // Remove active class from all tabs and tab contents
                 document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
                 
-                // Add active class to clicked tab and corresponding content
                 tab.classList.add('active');
                 document.getElementById(`${tab.dataset.tab}-content`).classList.add('active');
             });
@@ -377,47 +376,36 @@
         const modalInput = document.querySelector('.modal-input');
         const modalPostBtn = document.querySelector('.modal-post-btn');
 
-        // Open Modal
         flitterBtn.addEventListener('click', () => {
             flittModal.style.display = 'block';
         });
 
-        // Close Modal
         closeModal.addEventListener('click', () => {
             flittModal.style.display = 'none';
         });
 
-        // Close Modal when clicking outside
         window.addEventListener('click', (event) => {
             if (event.target === flittModal) {
                 flittModal.style.display = 'none';
             }
         });
 
-        // Enable/Disable Post Button
         modalInput.addEventListener('input', () => {
             modalPostBtn.disabled = modalInput.value.trim() === '';
         });
 
-        // Post Flitt
         modalPostBtn.addEventListener('click', () => {
             const flittContent = modalInput.value.trim();
             if (flittContent) {
-                // Here you would typically send the flitt to the server
-                // For now, we'll just show a toast
                 const toast = document.getElementById('toast');
                 const toastMessage = document.getElementById('toast-message');
                 
                 toastMessage.textContent = 'Your flitt was posted!';
                 toast.classList.add('show');
                 
-                // Hide the modal
                 flittModal.style.display = 'none';
-                
-                // Clear input
                 modalInput.value = '';
                 
-                // Remove toast after 3 seconds
                 setTimeout(() => {
                     toast.classList.remove('show');
                 }, 3000);
@@ -432,7 +420,6 @@
             logoutMenu.classList.toggle('show');
         });
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', (event) => {
             if (!profileMore.contains(event.target) && !logoutMenu.contains(event.target)) {
                 logoutMenu.classList.remove('show');

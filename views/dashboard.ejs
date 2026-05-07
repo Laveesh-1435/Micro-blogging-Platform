@@ -6,7 +6,6 @@
     <title>Flitter - Share your thoughts</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-  
 </head>
 <body>
     <div id="toast" class="toast">
@@ -15,7 +14,6 @@
     </div>
     
     <div class="container">
-        <!-- Left Sidebar -->
         <div class="left-sidebar sidebar">
             <div class="logo">
                 <i class="fab fa-twitter animate-pulse"></i>
@@ -44,34 +42,30 @@
             
             <div class="profile-preview">
                 <div class="profile-details">
-                    <img src="/profile.jpg"alt="Profile Picture" class="profile-pic">
+                    <img src="/profile.jpg" alt="Profile Picture" class="profile-pic">
                     <div class="profile-info">
                         <div class="profile-name"><%= user.name %></div>
-                        <div class="profile-handle">@<%= user.handle %></div>
+                        <div class="profile-handle">@<%= user.username %></div>
                     </div>
                 </div>
                 <div class="profile-more">
                     <i class="fas fa-ellipsis-h"></i>
                 </div>
-            
-                <!-- Logout Dropdown Menu -->
+                
                 <div class="logout-menu">
                     <button class="logout-button">
                         <i class="fas fa-sign-out-alt"></i>
                         <a href="api/logout">Logout</a>
                     </button>
                 </div>
-            
             </div>
             
-            <!-- Logout Dropdown Menu -->
             <div class="logout-menu">
                 <div class="logout-menu-item">Add an existing account</div>
-                <div class="logout-menu-item logout">Log out @<%= user.handle %></div>
+                <div class="logout-menu-item logout">Log out @<%= user.username %></div>
             </div>
         </div>
         
-        <!-- Main Content -->
         <div class="main-content">
             <div class="home-header">
                 <div class="home-title">Home</div>
@@ -120,13 +114,12 @@
             
             <div class="feed">
                 <% flitts.forEach(function(flitt) { %>
-                <!-- Post -->
                 <div class="flitt">
                     <img src="<%= flitt.author.profilePic %>" alt="<%= flitt.author.name %> Profile" class="flitt-profile-pic">
                     <div class="flitt-content">
                         <div class="flitt-header">
                             <span class="flitt-name"><%= flitt.author.name %></span>
-                            <span class="flitt-handle">@<%= flitt.author.handle %></span>
+                            <span class="flitt-handle">@<%= flitt.author.username %></span>
                             <span class="flitt-time">· <%= flitt.timePosted %></span>
                             <div class="flitt-more">
                                 <i class="fas fa-ellipsis-h"></i>
@@ -161,7 +154,6 @@
                             </div>
                         </div>
 
-                        <!-- Comments Section (initially hidden) -->
                         <div class="comments-section">
                             <div class="comment-input-container">
                                 <img src="<%= user.profilePic %>" alt="Your Profile" class="comment-profile-pic">
@@ -174,7 +166,7 @@
                                 <div class="comment-content">
                                     <div class="comment-header">
                                         <span class="comment-name"><%= reply.author.name %></span>
-                                        <span class="comment-handle">@<%= reply.author.handle %></span>
+                                        <span class="comment-handle">@<%= reply.author.username %></span>
                                         <span class="comment-time">· <%= reply.timePosted %></span>
                                     </div>
                                     <div class="comment-text">
@@ -205,7 +197,6 @@
             </div>
         </div>
         
-        <!-- Right Sidebar -->
         <div class="right-sidebar sidebar">
             <div class="search-container">
                 <i class="fas fa-search search-icon"></i>
@@ -241,7 +232,7 @@
                     <img src="<%= suggestion.profilePic %>" alt="<%= suggestion.name %>" class="follow-profile-pic">
                     <div class="follow-info">
                         <div class="follow-name"><%= suggestion.name %></div>
-                        <div class="follow-handle">@<%= suggestion.handle %></div>
+                        <div class="follow-handle">@<%= suggestion.username %></div>
                     </div>
                     <button class="follow-btn">Follow</button>
                 </div>
@@ -264,7 +255,6 @@
         </div>
     </div>
     
-    <!-- Mobile Navigation -->
     <div class="mobile-nav">
         <div class="mobile-nav-item active">
             <i class="fas fa-home"></i>
@@ -280,7 +270,6 @@
         </div>
     </div>
 
-    <!-- Flitt Modal -->
     <div id="flitt-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
