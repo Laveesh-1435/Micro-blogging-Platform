@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
-dotenv.config({ path: "./backend/.env" });
+dotenv.config({ path: ".env" });
+// { path: "./backend/.env" }
 console.log("MONGO_URI exists:", !!process.env.MONGO_URI);
 console.log("JWT exists:", !!process.env.JWT_SECRET);
 console.log("Cloud exists:", !!process.env.CLOUDINARY_CLOUD_NAME);
