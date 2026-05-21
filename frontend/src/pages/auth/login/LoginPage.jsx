@@ -6,8 +6,8 @@ import XSvg from "../../../components/svgs/X";
 import { MdOutlineMail } from "react-icons/md";
 import { MdPassword } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+
 const LoginPage = () => {
 	const [formData, setFormData] = useState({
 		username: "",
@@ -22,32 +22,36 @@ const LoginPage = () => {
 		error,
 	} = useMutation({
 		mutationFn: async ({ username, password }) => {
+			const res = await fetch("/api/auth/login", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ username, password }),
+			});
+
+			// Guard: safely parse JSON — never throw a raw SyntaxError to the user
+			const text = await res.text();
+			let data;
 			try {
-				const res = await fetch("/api/auth/login", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ username, password }),
-				});
-
-				const data = await res.json();
-
-				if (!res.ok) {
-					throw new Error(data.error || "Something went wrong");
-				}
-			} catch (error) {
-				throw new Error(error);
+				data = JSON.parse(text);
+			} catch {
+				throw new Error("Server error — please try again");
 			}
+
+			if (!res.ok) {
+				throw new Error(data.error || "Something went wrong");
+			}
+
+			return data;
 		},
 		onSuccess: () => {
-			// refetch the authUser
-			toast.success("Account Login successfully");
+			toast.success("Logged in successfully");
 			queryClient.invalidateQueries({ queryKey: ["authUser"] });
 		},
 	});
 
-	const handleSubmit = (e) => { 
+	const handleSubmit = (e) => {
 		e.preventDefault();
 		loginMutation(formData);
 	};

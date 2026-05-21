@@ -34,24 +34,18 @@ export const followUnfollowUser = async (req, res) => {
 		const isFollowing = currentUser.following.includes(id);
 
 		if (isFollowing) {
-			// Unfollow the user
 			await User.findByIdAndUpdate(id, { $pull: { followers: req.user._id } });
 			await User.findByIdAndUpdate(req.user._id, { $pull: { following: id } });
-
 			res.status(200).json({ message: "User unfollowed successfully" });
 		} else {
-			// Follow the user
 			await User.findByIdAndUpdate(id, { $push: { followers: req.user._id } });
 			await User.findByIdAndUpdate(req.user._id, { $push: { following: id } });
-			// Send notification to the user
 			const newNotification = new Notification({
 				type: "follow",
 				from: req.user._id,
 				to: userToModify._id,
 			});
-
 			await newNotification.save();
-
 			res.status(200).json({ message: "User followed successfully" });
 		}
 	} catch (error) {
@@ -75,7 +69,6 @@ export const getSuggestedUsers = async (req, res) => {
 			{ $sample: { size: 10 } },
 		]);
 
-		// 1,2,3,4,5,6,
 		const filteredUsers = users.filter((user) => !usersFollowedByMe.following.includes(user._id));
 		const suggestedUsers = filteredUsers.slice(0, 4);
 
@@ -100,6 +93,22 @@ export const getFollowingUsers = async (req, res) => {
 		res.status(200).json(followingUsers);
 	} catch (error) {
 		console.log("Error in getFollowingUsers: ", error.message);
+		res.status(500).json({ error: error.message });
+	}
+};
+
+export const getFollowers = async (req, res) => {
+	try {
+		const user = await User.findById(req.user._id).select("followers");
+		if (!user) return res.status(404).json({ error: "User not found" });
+
+		const followers = await User.find({ _id: { $in: user.followers } })
+			.select("-password")
+			.sort({ fullName: 1 });
+
+		res.status(200).json(followers);
+	} catch (error) {
+		console.log("Error in getFollowers: ", error.message);
 		res.status(500).json({ error: error.message });
 	}
 };
@@ -131,10 +140,8 @@ export const updateUser = async (req, res) => {
 
 		if (profileImg) {
 			if (user.profileImg) {
-				// https://res.cloudinary.com/dyfqon1v6/image/upload/v1712997552/zmxorcxexpdbh8r0bkjb.png
 				await cloudinary.uploader.destroy(user.profileImg.split("/").pop().split(".")[0]);
 			}
-
 			const uploadedResponse = await cloudinary.uploader.upload(profileImg);
 			profileImg = uploadedResponse.secure_url;
 		}
@@ -143,7 +150,6 @@ export const updateUser = async (req, res) => {
 			if (user.coverImg) {
 				await cloudinary.uploader.destroy(user.coverImg.split("/").pop().split(".")[0]);
 			}
-
 			const uploadedResponse = await cloudinary.uploader.upload(coverImg);
 			coverImg = uploadedResponse.secure_url;
 		}
@@ -157,8 +163,6 @@ export const updateUser = async (req, res) => {
 		user.coverImg = coverImg || user.coverImg;
 
 		user = await user.save();
-
-		// password should be null in response
 		user.password = null;
 
 		return res.status(200).json(user);

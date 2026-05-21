@@ -6,6 +6,8 @@ import SignUpPage from "./pages/auth/signup/SignUpPage";
 import NotificationPage from "./pages/notification/NotificationPage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import HashtagPage from "./pages/hashtag/HashtagPage";
+import FollowingPage from "./pages/following/FollowingPage";
+import FollowersPage from "./pages/followers/FollowersPage";
 
 import Sidebar from "./components/common/Sidebar";
 import RightPanel from "./components/common/RightPanel";
@@ -19,7 +21,18 @@ function App() {
 		queryKey: ["authUser"],
 		queryFn: async () => {
 			const res = await fetch("/api/auth/me");
-			const data = await res.json();
+
+			// Guard: if the server returns an empty body or non-JSON, treat as logged out
+			const text = await res.text();
+			if (!text) return null;
+
+			let data;
+			try {
+				data = JSON.parse(text);
+			} catch {
+				return null;
+			}
+
 			if (data.error) return null;
 			if (!res.ok) throw new Error(data.error || "Something went wrong");
 			return data;
@@ -44,6 +57,8 @@ function App() {
 				<Route path='/signup' element={!authUser ? <SignUpPage /> : <Navigate to='/' />} />
 				<Route path='/notifications' element={authUser ? <NotificationPage /> : <Navigate to='/login' />} />
 				<Route path='/profile/:username' element={authUser ? <ProfilePage /> : <Navigate to='/login' />} />
+				<Route path='/following' element={authUser ? <FollowingPage /> : <Navigate to='/login' />} />
+				<Route path='/followers' element={authUser ? <FollowersPage /> : <Navigate to='/login' />} />
 				<Route path='/hashtag/:tag' element={authUser ? <HashtagPage /> : <Navigate to='/login' />} />
 			</Routes>
 			{authUser && <RightPanel />}
