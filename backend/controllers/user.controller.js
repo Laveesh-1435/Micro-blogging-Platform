@@ -88,6 +88,22 @@ export const getSuggestedUsers = async (req, res) => {
 	}
 };
 
+export const getFollowingUsers = async (req, res) => {
+	try {
+		const user = await User.findById(req.user._id).select("following");
+		if (!user) return res.status(404).json({ error: "User not found" });
+
+		const followingUsers = await User.find({ _id: { $in: user.following } })
+			.select("-password")
+			.sort({ fullName: 1 });
+
+		res.status(200).json(followingUsers);
+	} catch (error) {
+		console.log("Error in getFollowingUsers: ", error.message);
+		res.status(500).json({ error: error.message });
+	}
+};
+
 export const updateUser = async (req, res) => {
 	const { fullName, email, username, currentPassword, newPassword, bio, link } = req.body;
 	let { profileImg, coverImg } = req.body;

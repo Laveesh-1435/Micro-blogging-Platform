@@ -3,7 +3,9 @@ import { BiRepost } from "react-icons/bi";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import { FaRegBookmark, FaBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
-import { useState } from "react";
+import { BsEmojiSmileFill } from "react-icons/bs";
+import { IoCloseSharp } from "react-icons/io5";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
@@ -11,8 +13,19 @@ import { toast } from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
 import { formatPostDate } from "../../utils/date";
 
+const EMOJI_LIST = [
+	"😀","😂","😍","🥰","😎","🤔","😭","😡","🥳","🤩",
+	"👍","👎","❤️","🔥","✨","🎉","🙌","💯","😢","😅",
+	"🤣","😊","😇","🥺","😏","😤","🤯","🥴","😴","🤗",
+	"👀","💀","🫡","🫠","🤌","💪","🙏","👏","🎊","⭐",
+	"🌟","💥","🎯","🚀","💡","🌈","🍕","🎮","📸","🏆",
+];
+
 const Post = ({ post }) => {
 	const [comment, setComment] = useState("");
+	const [showCommentEmoji, setShowCommentEmoji] = useState(false);
+	const commentRef = useRef(null);
+
 	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 	const queryClient = useQueryClient();
 	const postOwner = post.user;
@@ -96,12 +109,26 @@ const Post = ({ post }) => {
 		onSuccess: () => {
 			toast.success("Comment posted successfully");
 			setComment("");
+			setShowCommentEmoji(false);
 			queryClient.invalidateQueries({ queryKey: ["posts"] });
 		},
 		onError: (error) => toast.error(error.message),
 	});
 
-	// Render hashtags as clickable links
+	const handleCommentEmojiClick = (emoji) => {
+		const textarea = commentRef.current;
+		if (!textarea) { setComment((prev) => prev + emoji); return; }
+		const start = textarea.selectionStart;
+		const end = textarea.selectionEnd;
+		const newText = comment.slice(0, start) + emoji + comment.slice(end);
+		setComment(newText);
+		setTimeout(() => {
+			textarea.selectionStart = start + emoji.length;
+			textarea.selectionEnd = start + emoji.length;
+			textarea.focus();
+		}, 0);
+	};
+
 	const renderTextWithHashtags = (text) => {
 		if (!text) return null;
 		const parts = text.split(/(#\w+)/g);
@@ -142,15 +169,13 @@ const Post = ({ post }) => {
 						{isMyPost && (
 							<span className='flex justify-end flex-1'>
 								{!isDeleting && (
-									<FaTrash
-										className='cursor-pointer hover:text-red-500'
-										onClick={() => deletePost()}
-									/>
+									<FaTrash className='cursor-pointer hover:text-red-500' onClick={() => deletePost()} />
 								)}
 								{isDeleting && <LoadingSpinner size='sm' />}
 							</span>
 						)}
 					</div>
+
 					<div className='flex flex-col gap-3 overflow-hidden'>
 						<span>{renderTextWithHashtags(post.text)}</span>
 						{post.img && (
@@ -161,9 +186,11 @@ const Post = ({ post }) => {
 							/>
 						)}
 					</div>
+
 					<div className='flex justify-between mt-3'>
 						<div className='flex gap-4 items-center w-2/3 justify-between'>
-							{/* Comment */}
+
+							{/* Comment button */}
 							<div
 								className='flex gap-1 items-center cursor-pointer group'
 								onClick={() => document.getElementById("comments_modal" + post._id).showModal()}
@@ -184,36 +211,80 @@ const Post = ({ post }) => {
 												No comments yet 🤔 Be the first one 😉
 											</p>
 										)}
-										{post.comments.map((comment) => (
-											<div key={comment._id} className='flex gap-2 items-start'>
+										{post.comments.map((c) => (
+											<div key={c._id} className='flex gap-2 items-start'>
 												<div className='avatar'>
 													<div className='w-8 rounded-full'>
-														<img src={comment.user.profileImg || "/avatar-placeholder.png"} />
+														<img src={c.user.profileImg || "/avatar-placeholder.png"} />
 													</div>
 												</div>
 												<div className='flex flex-col'>
 													<div className='flex items-center gap-1'>
-														<span className='font-bold'>{comment.user.fullName}</span>
-														<span className='text-gray-700 text-sm'>@{comment.user.username}</span>
+														<span className='font-bold'>{c.user.fullName}</span>
+														<span className='text-gray-700 text-sm'>@{c.user.username}</span>
 													</div>
-													<div className='text-sm'>{comment.text}</div>
+													<div className='text-sm'>{c.text}</div>
 												</div>
 											</div>
 										))}
 									</div>
+
+									{/* Comment input with emoji */}
 									<form
-										className='flex gap-2 items-center mt-4 border-t border-gray-600 pt-2'
+										className='flex flex-col gap-2 mt-4 border-t border-gray-600 pt-2'
 										onSubmit={(e) => { e.preventDefault(); if (!isCommenting) commentPost(); }}
 									>
-										<textarea
-											className='textarea w-full p-1 rounded text-md resize-none border focus:outline-none border-gray-800'
-											placeholder='Add a comment...'
-											value={comment}
-											onChange={(e) => setComment(e.target.value)}
-										/>
-										<button className='btn btn-primary rounded-full btn-sm text-white px-4'>
-											{isCommenting ? <LoadingSpinner size='md' /> : "Post"}
-										</button>
+										<div className='flex gap-2 items-center'>
+											<textarea
+												ref={commentRef}
+												className='textarea w-full p-1 rounded text-md resize-none border focus:outline-none border-gray-800'
+												placeholder='Add a comment...'
+												value={comment}
+												onChange={(e) => setComment(e.target.value)}
+											/>
+											<button
+												type='submit'
+												className='btn btn-primary rounded-full btn-sm text-white px-4'
+											>
+												{isCommenting ? <LoadingSpinner size='md' /> : "Post"}
+											</button>
+										</div>
+
+										{/* Emoji toggle row */}
+										<div className='relative'>
+											<button
+												type='button'
+												className='flex items-center gap-1 text-slate-500 hover:text-primary transition-colors text-sm'
+												onClick={() => setShowCommentEmoji((prev) => !prev)}
+											>
+												<BsEmojiSmileFill className='w-4 h-4' />
+												<span>Add emoji</span>
+											</button>
+
+											{showCommentEmoji && (
+												<div className='absolute bottom-7 left-0 z-50 bg-[#16181C] border border-gray-700 rounded-xl p-3 w-72 shadow-xl'>
+													<div className='flex justify-between items-center mb-2'>
+														<span className='text-sm text-gray-400 font-semibold'>Pick an emoji</span>
+														<IoCloseSharp
+															className='w-4 h-4 cursor-pointer text-gray-400 hover:text-white'
+															onClick={() => setShowCommentEmoji(false)}
+														/>
+													</div>
+													<div className='grid grid-cols-10 gap-1'>
+														{EMOJI_LIST.map((emoji, i) => (
+															<button
+																key={i}
+																type='button'
+																className='text-xl hover:bg-gray-700 rounded p-0.5 cursor-pointer transition-colors'
+																onClick={() => handleCommentEmojiClick(emoji)}
+															>
+																{emoji}
+															</button>
+														))}
+													</div>
+												</div>
+											)}
+										</div>
 									</form>
 								</div>
 								<form method='dialog' className='modal-backdrop'>
