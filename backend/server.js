@@ -1,15 +1,11 @@
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, resolve } from "path";
+import path from "path";
 
-// Resolve .env path relative to THIS file, not the CWD
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config({ path: resolve(__dirname, "../.env") });
-
-console.log("MONGO_URI exists:", !!process.env.MONGO_URI);
-console.log("JWT exists:", !!process.env.JWT_SECRET);
-console.log("Cloud exists:", !!process.env.CLOUDINARY_CLOUD_NAME);
 
 import express from "express";
 import cookieParser from "cookie-parser";
@@ -39,21 +35,29 @@ app.use("/api/users", userRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/notifications", notificationRoutes);
 
-// Global error handler — ensures every unhandled error returns JSON, never an empty body
+// In production: serve the built React frontend
+if (process.env.NODE_ENV === "production") {
+  const frontendDist = path.resolve(__dirname, "../frontend/dist");
+  app.use(express.static(frontendDist));
+
+  // Any route that is NOT an API route returns the React app
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendDist, "index.html"));
+  });
+}
+
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err.stack || err.message);
   res.status(500).json({ error: err.message || "Internal Server Error" });
 });
 
-// Connect to MongoDB FIRST, then start listening so the DB is ready for the first request
 connectMongoDB()
   .then(() => {
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`Server is running on port ${PORT}`);
-      console.log(`Access from other devices: http://<YOUR_LOCAL_IP>:${PORT}`);
     });
   })
   .catch((err) => {
     console.error("Failed to connect to MongoDB:", err.message);
     process.exit(1);
-  });
+  }); 
