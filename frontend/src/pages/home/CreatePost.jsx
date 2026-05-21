@@ -5,47 +5,44 @@ import { IoCloseSharp } from "react-icons/io5";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
+// Common emojis for the picker
+const EMOJI_LIST = [
+	"😀","😂","😍","🥰","😎","🤔","😭","😡","🥳","🤩",
+	"👍","👎","❤️","🔥","✨","🎉","🙌","💯","😢","😅",
+	"🤣","😊","😇","🥺","😏","😤","🤯","🥴","😴","🤗",
+	"👀","💀","🫡","🫠","🤌","💪","🙏","👏","🎊","⭐",
+	"🌟","💥","🎯","🚀","💡","🌈","🍕","🎮","📸","🏆",
+];
+
 const CreatePost = () => {
 	const [text, setText] = useState("");
 	const [img, setImg] = useState(null);
-
+	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 	const imgRef = useRef(null);
+	const textareaRef = useRef(null);
 
 	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 	const queryClient = useQueryClient();
 
-	const {
-		mutate: createPost,
-		isPending,
-		isError,
-	} = useMutation({
+	const { mutate: createPost, isPending, isError } = useMutation({
 		mutationFn: async ({ text, img }) => {
-			try {
-				const res = await fetch("/api/post/create", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ text, img }),
-				});
-				const data = await res.json();
-				if (!res.ok) {
-					throw new Error(data.error || "Something went wrong");
-				}
-				return data;
-			} catch (error) {
-				throw new Error(error);
-			}
+			const res = await fetch("/api/post/create", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ text, img }),
+			});
+			const data = await res.json();
+			if (!res.ok) throw new Error(data.error || "Something went wrong");
+			return data;
 		},
-
 		onSuccess: () => {
 			setText("");
 			setImg(null);
+			setShowEmojiPicker(false);
 			toast.success("Post created successfully");
 			queryClient.invalidateQueries({ queryKey: ["posts"] });
 		},
 	});
-
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -56,11 +53,23 @@ const CreatePost = () => {
 		const file = e.target.files[0];
 		if (file) {
 			const reader = new FileReader();
-			reader.onload = () => {
-				setImg(reader.result);
-			};
+			reader.onload = () => setImg(reader.result);
 			reader.readAsDataURL(file);
 		}
+	};
+
+	const handleEmojiClick = (emoji) => {
+		const textarea = textareaRef.current;
+		const start = textarea.selectionStart;
+		const end = textarea.selectionEnd;
+		const newText = text.slice(0, start) + emoji + text.slice(end);
+		setText(newText);
+		// Restore cursor position after emoji insert
+		setTimeout(() => {
+			textarea.selectionStart = start + emoji.length;
+			textarea.selectionEnd = start + emoji.length;
+			textarea.focus();
+		}, 0);
 	};
 
 	return (
@@ -72,7 +81,8 @@ const CreatePost = () => {
 			</div>
 			<form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>
 				<textarea
-					className='textarea w-full p-0 text-lg resize-none border-none focus:outline-none  border-gray-800'
+					ref={textareaRef}
+					className='textarea w-full p-0 text-lg resize-none border-none focus:outline-none border-gray-800'
 					placeholder='What is happening?!'
 					value={text}
 					onChange={(e) => setText(e.target.value)}
@@ -81,26 +91,56 @@ const CreatePost = () => {
 					<div className='relative w-72 mx-auto'>
 						<IoCloseSharp
 							className='absolute top-0 right-0 text-white bg-gray-800 rounded-full w-5 h-5 cursor-pointer'
-							onClick={() => {
-								setImg(null);
-								imgRef.current.value = null;
-							}}
+							onClick={() => { setImg(null); imgRef.current.value = null; }}
 						/>
 						<img src={img} className='w-full mx-auto h-72 object-contain rounded' />
 					</div>
 				)}
 
 				<div className='flex justify-between border-t py-2 border-t-gray-700'>
-					<div className='flex gap-1 items-center'>
+					<div className='flex gap-1 items-center relative'>
 						<CiImageOn
 							className='fill-primary w-6 h-6 cursor-pointer'
 							onClick={() => imgRef.current.click()}
 						/>
-						<BsEmojiSmileFill className='fill-primary w-5 h-5 cursor-pointer' />
+						<BsEmojiSmileFill
+							className='fill-primary w-5 h-5 cursor-pointer'
+							onClick={() => setShowEmojiPicker((prev) => !prev)}
+						/>
+
+						{/* Emoji Picker Dropdown */}
+						{showEmojiPicker && (
+							<div className='absolute top-8 left-0 z-50 bg-[#16181C] border border-gray-700 rounded-xl p-3 w-72 shadow-xl'>
+								<div className='flex justify-between items-center mb-2'>
+									<span className='text-sm text-gray-400 font-semibold'>Pick an emoji</span>
+									<IoCloseSharp
+										className='w-4 h-4 cursor-pointer text-gray-400 hover:text-white'
+										onClick={() => setShowEmojiPicker(false)}
+									/>
+								</div>
+								<div className='grid grid-cols-10 gap-1'>
+									{EMOJI_LIST.map((emoji, i) => (
+										<button
+											key={i}
+											type='button'
+											className='text-xl hover:bg-gray-700 rounded p-0.5 cursor-pointer transition-colors'
+											onClick={() => handleEmojiClick(emoji)}
+										>
+											{emoji}
+										</button>
+									))}
+								</div>
+							</div>
+						)}
 					</div>
-					<input type='file'
-          accept="image/*"
-          hidden ref={imgRef} onChange={handleImgChange} />
+
+					<input
+						type='file'
+						accept='image/*'
+						hidden
+						ref={imgRef}
+						onChange={handleImgChange}
+					/>
 					<button className='btn btn-primary rounded-full btn-sm text-white px-4'>
 						{isPending ? "Posting..." : "Post"}
 					</button>
